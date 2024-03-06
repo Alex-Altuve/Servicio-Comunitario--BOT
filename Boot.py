@@ -53,6 +53,7 @@ if( len(enlaces)!=0):
 else: 
     alerta("Ha ocurrido un error al continuar con el proceso con el bot, por favor, apague el bot e intente de nuevo")
 
+alerta("Debe seleccionar un formulario para que el bot pueda continuar con el proceso de automatización")
 #Pausa para que el usuario seleccione el formulario
 while True:
     if driver.current_url != 'https://eu.kobotoolbox.org/#/projects/home':
