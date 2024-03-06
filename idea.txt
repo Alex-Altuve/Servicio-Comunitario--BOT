@@ -1,0 +1,23 @@
+URL_VALIDAR = "TU_URL_VALIDAR"
+
+def validar_url(url):
+    if url == URL_VALIDAR:
+        return True
+    return False
+
+enlaces = []
+elementos = driver.find_elements(By.XPATH, '//a[not(@class) and contains(@href, "summary")]')
+for elemento in elementos:
+    url_enlace = elemento.get_attribute("href")
+    enlaces.append(url_enlace)
+
+for url_enlace in enlaces:
+    if validar_url(url_enlace):
+        # La URL está en la lista
+        print("La URL está en la lista")
+    else:
+        # La URL no está en la lista
+        print("La URL no está en la lista")
+
+if len(enlaces) == 0:
+    print("No se encontraron enlaces")
