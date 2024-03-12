@@ -69,6 +69,21 @@ if validacion == True:
     time.sleep(6) 
     enlace_datos_form= driver.find_element(By.CSS_SELECTOR,"#kpiapp > div.mdl-layout.mdl-layout--fixed-header.page-wrapper > div.mdl-layout__content.page-wrapper__content.page-wrapper__content--form-landing > nav > ul > li:nth-child(3)")
     enlace_datos_form.click()
+    
+    # Esperar a que la página se cargue completamente para agarrar los check_box
+    # driver.implicitly_wait(10)
+    # checkboxesFiltrados = []
+    # checkboxes = driver.find_elements(By.CLASS_NAME, "checkbox__input")
+    
+    # for i in range(1, len(checkboxes)):
+    #   checkboxes[2].click()
+    
+    #Aqui se pondra el mensaje para la eleccion de la cantidad de form a imprimir 
+    # alerta("ESPERA PA PROBAR")
+    # while True:
+    #     if driver.current_url != 'https://eu.kobotoolbox.org/#/forms/a8b3ib9YmME5azzk6c5ijh/data/table':
+    #         break
+    # time.sleep(0.1)
 
     time.sleep(10) 
     check_principal = driver.find_element(By.CSS_SELECTOR,"#kpiapp > div.mdl-layout.mdl-layout--fixed-header.page-wrapper > div.mdl-layout__content.page-wrapper__content.page-wrapper__content--form-landing > div.form-view.form-view--table > div.ReactTable.-highlight > div.rt-table > div.rt-thead.-filters > div > div.rt-th.rt-sub-actions.is-frozen.is-last-frozen > div > div.checkbox > label > input")
