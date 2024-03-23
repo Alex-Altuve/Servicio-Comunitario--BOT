@@ -5,14 +5,13 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import pyautogui  as pa
 import time
-from selenium.webdriver.common.action_chains import ActionChains
-from selenium.webdriver.common.keys import Keys
 from datetime import datetime, timedelta
 import re
 from selenium.common.exceptions import NoAlertPresentException
 from selenium.webdriver.support.ui import Select
-def alerta(mensaje_notificacion): ## PROBAR
-    # Ejecutar JavaScript para mostrar una notificación
+
+def alerta(mensaje_notificacion): 
+
     script = f'alert("{mensaje_notificacion}");'
     driver.execute_script(script)
   # Esperar hasta que aparezca la alerta
@@ -37,17 +36,48 @@ def alerta(mensaje_notificacion): ## PROBAR
         except NoAlertPresentException:
             break
 def nombrepdf():
-    copiando_nombre=driver.find_element(By.CSS_SELECTOR, '#kpiapp > div.mdl-layout.mdl-layout--fixed-header.page-wrapper.page-wrapper--is-modal-visible.page-wrapper--is-modal-submission > div.modal__backdrop > div > div > div > div > div.submission-data-table > div.submission-data-table__row.submission-data-table__row--group.submission-data-table__row--type-group_root > div.submission-data-table__row.submission-data-table__row--group-children > div:nth-child(2) > div.submission-data-table__row.submission-data-table__row--group-children > div:nth-child(16) > div.submission-data-table__column.submission-data-table__column--data > div')
-    texto=copiando_nombre.text
-    print(texto)
-    copiando_fecha=driver.find_element(By.CSS_SELECTOR, '#kpiapp > div.mdl-layout.mdl-layout--fixed-header.page-wrapper.page-wrapper--is-modal-visible.page-wrapper--is-modal-submission > div.modal__backdrop > div > div > div > div > div.submission-data-table > div.submission-data-table__row.submission-data-table__row--group.submission-data-table__row--type-group_root > div.submission-data-table__row.submission-data-table__row--group-children > div:nth-child(2) > div.submission-data-table__row.submission-data-table__row--group-children > div:nth-child(8) > div.submission-data-table__column.submission-data-table__column--data > div')
-    texto2=copiando_fecha.text
-    print(texto2)
-    texto2=modificar_fecha(texto2)
-    print(texto+texto2)
-    nom=texto+texto2
-    return nom
+    #CODIGO UNICO 
+    contenedor_div = WebDriverWait(driver, 10).until(
+    EC.presence_of_element_located((By.CSS_SELECTOR, '#kpiapp > div.mdl-layout.mdl-layout--fixed-header.page-wrapper.page-wrapper--is-modal-visible.page-wrapper--is-modal-submission > div.modal__backdrop > div > div > div > div > div.submission-data-table > div.submission-data-table__row.submission-data-table__row--group.submission-data-table__row--type-group_root > div.submission-data-table__row.submission-data-table__row--group-children > div:nth-child(2)'))
+    )
 
+    # Obtener todos los elementos dentro del contenedor div
+    elementos = contenedor_div.find_elements(By.TAG_NAME, 'div')
+
+    # Recorrer los elementos y verificar si contienen el texto deseado
+    for i, elemento in enumerate(elementos):
+        texto = elemento.text
+        if'¿A qué proyecto se reportan las actividades que se van a realizar?' in texto:
+        # Verificar si existe un elemento siguiente
+            if i + 1 < len(elementos):
+                elementoSiguiente = elementos[i + 1]
+                nombre_proyecto = elementoSiguiente.text
+
+
+        if 'Fecha en la que se realiza la atención' in texto:
+            if i + 1 < len(elementos):
+                elementoSiguiente = elementos[i + 1]
+                fecha = elementoSiguiente.text
+
+        # Verificar si el texto cumple con la condición deseada
+        if 'Código único asignado a la PERSONA REGISTRADA' in texto:
+            if i + 1 < len(elementos):
+                elementoSiguiente = elementos[i + 1]
+                codigo_unico = elementoSiguiente.text
+
+    
+    # Guardar el valor de CODIGO UNICO
+    print(codigo_unico)
+
+    # Guardar el valor de Fecha
+    print(fecha)
+    fecha_nueva = modificar_fecha(fecha)
+    print(fecha_nueva)
+    # Guardar el valor del Nombre del Proyecto
+    print(nombre_proyecto)
+
+    nom = codigo_unico + fecha_nueva + nombre_proyecto.upper()
+    return nom
 
 def modificar_fecha(fecha):
     # Definir mapeo de nombres de meses en español a números de mes
@@ -92,6 +122,7 @@ def pasar_siguiente():
     pass
 
 def descargar_pdf():
+
     nom=nombrepdf()
     time.sleep(6)
     boton_ver_form= driver.find_element(By.CSS_SELECTOR,"#kpiapp > div.mdl-layout.mdl-layout--fixed-header.page-wrapper.page-wrapper--is-modal-visible.page-wrapper--is-modal-submission > div.modal__backdrop > div > div > div > div > div:nth-child(2) > div.submission-actions > a:nth-child(3)")
@@ -186,6 +217,7 @@ usuario.send_keys('pasante_monitoreo')
 contrasena=driver.find_element(By.NAME,'password')
 contrasena.send_keys('1/fyV2g(H1h')
 contrasena.submit()
+
 #alerta("Debe ingresar su usuario y contraseña para que el bot pueda continuar")
 # Pausa para que el usuario ingrese su usuario y contraseña
 #while True:
