@@ -3,16 +3,14 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-import keyboard
 import pyautogui  as pa
-import random
 import time
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
 from datetime import datetime, timedelta
 import re
 from selenium.common.exceptions import NoAlertPresentException
-
+from selenium.webdriver.support.ui import Select
 def alerta(mensaje_notificacion): ## PROBAR
     # Ejecutar JavaScript para mostrar una notificación
     script = f'alert("{mensaje_notificacion}");'
@@ -110,25 +108,57 @@ def descargar_pdf():
     # Esperar hasta que el elemento de destino esté presente en la página
     wait = WebDriverWait(driver, 10)
     wait.until(EC.presence_of_element_located((By.XPATH, '/html/body/div[1]/article/header/button[1]')))
-    pa.moveTo(x=1284, y=178, duration=3)
-    pa.click(x=1284, y=178)
-    pa.tripleClick()
+    time.sleep(6)
+    imprimir= driver.find_element(By.XPATH, '/html/body/div[1]/article/header/button[1]')
+
+    # Obtiene las coordenadas absolutas del botón en la pantalla
+    x_absoluto = imprimir.location['x']
+    y_absoluto = imprimir.location['y']
+
+        # Imprime los resultados
+    print('Posición del botón en la pantalla - x:', x_absoluto)
+    print('Posición del botón en la pantalla - y:', y_absoluto)
+
+    # Obtiene las dimensiones del botón
+    ancho_boton = imprimir.size['width']
+    alto_boton = imprimir.size['height']
+
+    # Imprime los resultados
+    print('Tamaño del botón - ancho:', ancho_boton)
+    print('Tamaño del botón - alto:', alto_boton)
+
+
+    pa.moveTo(x_absoluto, y_absoluto+123, duration=3)
+    pa.click(x_absoluto,y_absoluto+123)
     time.sleep(4)
-    pa.moveTo(x=1456, y=902, duration=3)
-    pa.click(x=1456, y=902)
-    pa.tripleClick()
+    #pa.moveTo(x=1456, y=902, duration=3)
+    #pa.click(x=1456, y=902)
+    #pa.tripleClick()
+    pa.press('enter')
     time.sleep(4)
     pa.typewrite(nom)
     pa.press('enter')
     time.sleep(4)
     driver.close()
     driver.switch_to.window(ventana_form[0])
+
+def calcular_diferencia(numero):
+    veces_resta = 0
+
+    while numero > 500:
+        numero -= 500
+        veces_resta += 1
+
+
+
+    return numero, veces_resta
 #------VENTANA 0
 # Ruta al controlador de Microsoft Edge (descárgalo previamente desde https://developer.microsoft.com/en-us/microsoft-edge/tools/webdriver/)
 # No funciono asi que lo deje asi pero hay que verificar como hacer esto 
 print(pa.size())#en la mia es 1920x1080
 print(pa.position())#(x=143, y=961) esto para darle al boton imprimir, (x=170, y=435)Para escribir el nombre, (x=793, y=504)para guardarlo con el nombre 
 # Inicializa las opciones del navegador Chrome
+
 options = Options()
 options.add_argument("--disable-features=EnableEphemeralFlashPermission")
 
@@ -143,19 +173,25 @@ driver = webdriver.Chrome(options=options)
 driver.get('https://eu.kobotoolbox.org/accounts/login/')
 #Se maximiza la pantalla
 driver.maximize_window()
+# Ejecuta un script de JavaScript para obtener el tamaño del navegador
+ancho_navegador = driver.execute_script("return window.innerWidth;")
+alto_navegador = driver.execute_script("return window.innerHeight;")
 
+# Imprime los resultados
+print('Tamaño del navegador - ancho:', ancho_navegador)
+print('Tamaño del navegador - alto:', alto_navegador)
 time.sleep(6)
-#usuario=driver.find_element(By.NAME, "login")
-#usuario.send_keys('pasante_monitoreo')
-#contrasena=driver.find_element(By.NAME,'password')
-#contrasena.send_keys('1/fyV2g(H1h')
-#contrasena.submit()
-alerta("Debe ingresar su usuario y contraseña para que el bot pueda continuar")
+usuario=driver.find_element(By.NAME, "login")
+usuario.send_keys('pasante_monitoreo')
+contrasena=driver.find_element(By.NAME,'password')
+contrasena.send_keys('1/fyV2g(H1h')
+contrasena.submit()
+#alerta("Debe ingresar su usuario y contraseña para que el bot pueda continuar")
 # Pausa para que el usuario ingrese su usuario y contraseña
-while True:
-    if driver.current_url != 'https://eu.kobotoolbox.org/accounts/login/':
-        break
-    time.sleep(0.1)
+#while True:
+#    if driver.current_url != 'https://eu.kobotoolbox.org/accounts/login/':
+#        break
+#    time.sleep(0.1)
 # Esperar a que la página se cargue completamente
 driver.implicitly_wait(10)
 
@@ -193,26 +229,38 @@ if validacion == True:
     enlace_datos_form= driver.find_element(By.CSS_SELECTOR,"#kpiapp > div.mdl-layout.mdl-layout--fixed-header.page-wrapper > div.mdl-layout__content.page-wrapper__content.page-wrapper__content--form-landing > nav > ul > li:nth-child(3)")
     enlace_datos_form.click()
     #Se espera a que cargue
-
     time.sleep(5) 
-    ojitos = driver.find_elements(By.CSS_SELECTOR,'button[data-tip="Abrir"]')
+
+    #Se seleeciona para que se muestren 500 filas, para asi buscar mas eficientemente
+    seleccionar_cant_filas= driver.find_element(By.CSS_SELECTOR,"#kpiapp > div.mdl-layout.mdl-layout--fixed-header.page-wrapper > div.mdl-layout__content.page-wrapper__content.page-wrapper__content--form-landing > div.form-view.form-view--table > div.ReactTable.-highlight > div.pagination-bottom > div > div.-center > span.select-wrap.-pageSizeOptions > select")
+    select= Select(seleccionar_cant_filas)
+    select.select_by_value("500")
+    
+    #Se espera a que cargue
+    time.sleep(5) 
+
+    
     #Se piden de donde a donde al usuario
     # Solicitar un número al usuario
     numero_inicio = pa.prompt(text='Por favor, ingrese un número desde donde iniciar')
     #numero_inicio = int(input("Por favor, ingrese el numero desde donde iniciar: "))
     if(re.match("^[0-9]+$", numero_inicio)):
         numero_inicio=int(numero_inicio)
+        posicion_ojito, veces_next = calcular_diferencia(numero_inicio)
         numero_pdf = pa.prompt(text='Por favor, ingrese la cantidad de PDFs a descargar')
         #numero_pdf=int(input("Por favor, ingrese la cantidad de archivos a descargar: "))
         if (re.match("^[0-9]+$", numero_pdf)):
             numero_pdf=int(numero_pdf)
-            #seleccionamos el primer ojito para llegar al que queremos esto por ahora
-            ojitos[0].click() 
+            sig= driver.find_element(By.XPATH, '//*[@id="kpiapp"]/div[3]/div[2]/div[2]/div[2]/div[2]/div/div[3]/button')
+            #le damos tantas veces a siguiente para llegar al archivo que queramos, con esto me refiero a la pagina 
+            for i in  range(1,veces_next+1):
+                sig.click()
+                time.sleep(5)    
+            #seleccionamos el ojito donde queremos descargar el pdf
+            ojitos = driver.find_elements(By.CSS_SELECTOR,'button[data-tip="Abrir"]')
+            ojitos[posicion_ojito-1].click() 
             time.sleep(6)
-            #le damos tantas veces a siguiente para llegar al archivo que queramos 
-            for i in  range(1,numero_inicio):
-                pasar_siguiente()
-
+            
             #Se abre ventana 1 para la descarga de archivos
             for i in range(1,numero_pdf+1):
                 descargar_pdf()
