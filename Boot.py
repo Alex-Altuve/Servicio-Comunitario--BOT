@@ -35,6 +35,8 @@ def alerta(mensaje_notificacion):
 
         except NoAlertPresentException:
             break
+
+
 def nombrepdf():
     #CODIGO UNICO 
     contenedor_div = WebDriverWait(driver, 10).until(
@@ -66,16 +68,27 @@ def nombrepdf():
                 codigo_unico = elementoSiguiente.text
 
     
-    # Guardar el valor de CODIGO UNICO
-    print(codigo_unico)
+    #Validamos el formato del codigo unico 
+    #patron = r'^[A-Za-z]{4}\d{4}[A-Za-z]{3}$'
+    patron = r'^[A-Z]{4}\d{8}[A-Z]{3}$'
+    es_valido = re.match(patron, codigo_unico)
 
-    # Guardar el valor de Fecha
-    print(fecha)
+    if es_valido is None:
+        alerta("El nombre unico no cumple el formato, este problema seguramente esta ocurriendo porque no cumple con el formato o el formulario no es compatible con el programa, porfavor, contactar con el desarrollador")
+        time.sleep(10)
+        driver.quit()
+
+    # Guardar el valor de Fecha y validamos el formato de la fecha 
+    patro = r'^\d{1,2} de (ene\.?|feb\.?|mar\.?|abr\.?|may\.?|jun\.?|jul\.?|ago\.?|sep\.?|oct\.?|nov\.?|dic\.?) de \d{4}$'
+
+    valida = re.match(patro, fecha)
+    if valida is None:
+        alerta("La fecha no cumple el formato, este problema seguramente esta ocurriendo porque no cumple con el formato o el formulario no es compatible con el programa, porfavor, contactar con el desarrollador")
+        time.sleep(10)
+        driver.quit()
+
     fecha_nueva = modificar_fecha(fecha)
-    print(fecha_nueva)
     # Guardar el valor del Nombre del Proyecto
-    print(nombre_proyecto)
-
     nom = codigo_unico + fecha_nueva + nombre_proyecto.upper()
     return nom
 
@@ -117,8 +130,13 @@ def modificar_fecha(fecha):
 def pasar_siguiente():
 
     siguiente=driver.find_element(By.CLASS_NAME, 'submission-pager')
-    siguiente.click()
-    time.sleep(6)
+    if  (siguiente.text == "ANTERIOR") or (siguiente.text=="BACK"):
+        alerta("Ingreso un numero el cual no esta entre los permitidos se alcanzo el limite por lo tanto se cerrara el programa")
+        time.sleep(10)
+        driver.quit()
+    else:
+        siguiente.click()
+        time.sleep(6)
     pass
 
 def descargar_pdf():
@@ -146,28 +164,16 @@ def descargar_pdf():
     x_absoluto = imprimir.location['x']
     y_absoluto = imprimir.location['y']
 
-        # Imprime los resultados
-    print('Posición del botón en la pantalla - x:', x_absoluto)
-    print('Posición del botón en la pantalla - y:', y_absoluto)
-
-    # Obtiene las dimensiones del botón
-    ancho_boton = imprimir.size['width']
-    alto_boton = imprimir.size['height']
-
-    # Imprime los resultados
-    print('Tamaño del botón - ancho:', ancho_boton)
-    print('Tamaño del botón - alto:', alto_boton)
-
-
+    #Click al boton de la impresora 
     pa.moveTo(x_absoluto, y_absoluto+123, duration=3)
     pa.click(x_absoluto,y_absoluto+123)
     time.sleep(4)
-    #pa.moveTo(x=1456, y=902, duration=3)
-    #pa.click(x=1456, y=902)
-    #pa.tripleClick()
+    #enter para presioanr el boton de guardar/imprimir  
     pa.press('enter')
     time.sleep(4)
+    #Se escribe el nombre del PDF
     pa.typewrite(nom)
+    #Guardar  el archivo con el nombre 
     pa.press('enter')
     time.sleep(4)
     driver.close()
@@ -180,16 +186,15 @@ def calcular_diferencia(numero):
         numero -= 500
         veces_resta += 1
 
-
-
     return numero, veces_resta
+
+#INICIO DEL CODIGO 
 #------VENTANA 0
 # Ruta al controlador de Microsoft Edge (descárgalo previamente desde https://developer.microsoft.com/en-us/microsoft-edge/tools/webdriver/)
-# No funciono asi que lo deje asi pero hay que verificar como hacer esto 
-print(pa.size())#en la mia es 1920x1080
-print(pa.position())#(x=143, y=961) esto para darle al boton imprimir, (x=170, y=435)Para escribir el nombre, (x=793, y=504)para guardarlo con el nombre 
-# Inicializa las opciones del navegador Chrome
+print(pa.size())
+print(pa.position()) 
 
+# Inicializa las opciones del navegador Chrome
 options = Options()
 options.add_argument("--disable-features=EnableEphemeralFlashPermission")
 
@@ -197,33 +202,27 @@ options.add_argument("--disable-features=EnableEphemeralFlashPermission")
 # Crea el controlador del navegador Chrome con las opciones configuradas
 # Inicializa el navegador Microsoft chrome
 driver = webdriver.Chrome(options=options)
-#Esto es para inicializarlo sin configuraciones 
-#driver = webdriver.Edge()
 
 # Abre la página de Google
 driver.get('https://eu.kobotoolbox.org/accounts/login/')
 #Se maximiza la pantalla
 driver.maximize_window()
-# Ejecuta un script de JavaScript para obtener el tamaño del navegador
-ancho_navegador = driver.execute_script("return window.innerWidth;")
-alto_navegador = driver.execute_script("return window.innerHeight;")
-
-# Imprime los resultados
-print('Tamaño del navegador - ancho:', ancho_navegador)
-print('Tamaño del navegador - alto:', alto_navegador)
 time.sleep(6)
-usuario=driver.find_element(By.NAME, "login")
-usuario.send_keys('pasante_monitoreo')
-contrasena=driver.find_element(By.NAME,'password')
-contrasena.send_keys('1/fyV2g(H1h')
-contrasena.submit()
 
-#alerta("Debe ingresar su usuario y contraseña para que el bot pueda continuar")
-# Pausa para que el usuario ingrese su usuario y contraseña
-#while True:
-#    if driver.current_url != 'https://eu.kobotoolbox.org/accounts/login/':
-#        break
-#    time.sleep(0.1)
+
+#usuario=driver.find_element(By.NAME, "login")
+#usuario.send_keys('pasante_monitoreo')
+#contrasena=driver.find_element(By.NAME,'password')
+#contrasena.send_keys('1/fyV2g(H1h')
+#contrasena.submit()
+
+alerta("Debe ingresar su usuario y contraseña para que el bot pueda continuar")
+#Pausa para que el usuario ingrese su usuario y contraseña
+while True:
+    if driver.current_url != 'https://eu.kobotoolbox.org/accounts/login/':
+        break
+    time.sleep(0.1)
+
 # Esperar a que la página se cargue completamente
 driver.implicitly_wait(10)
 
@@ -275,14 +274,14 @@ if validacion == True:
     #Se piden de donde a donde al usuario
     # Solicitar un número al usuario
     numero_inicio = pa.prompt(text='Por favor, ingrese un número desde donde iniciar')
-    #numero_inicio = int(input("Por favor, ingrese el numero desde donde iniciar: "))
     if(re.match("^[0-9]+$", numero_inicio)):
         numero_inicio=int(numero_inicio)
         posicion_ojito, veces_next = calcular_diferencia(numero_inicio)
         numero_pdf = pa.prompt(text='Por favor, ingrese la cantidad de PDFs a descargar')
-        #numero_pdf=int(input("Por favor, ingrese la cantidad de archivos a descargar: "))
         if (re.match("^[0-9]+$", numero_pdf)):
             numero_pdf=int(numero_pdf)
+            alerta("Porfavor, no tocar ni el mouse ni el teclado hasta terminar con el proceso")
+            time.sleep(6)
             sig= driver.find_element(By.XPATH, '//*[@id="kpiapp"]/div[3]/div[2]/div[2]/div[2]/div[2]/div/div[3]/button')
             #le damos tantas veces a siguiente para llegar al archivo que queramos, con esto me refiero a la pagina 
             for i in  range(1,veces_next+1):
@@ -311,10 +310,9 @@ else:
     time.sleep(8)
     driver.quit()
 
-# Espera unos segundos para que los resultados se carguen las dos lineas de codigo son formas 
-#driver.implicitly_wait(1200)
+# Espera unos segundos para que los resultados se carguen 
 time.sleep(10)
 
-# Cierra el navegador (no se porque igual se cierra solo)
+# Cierra el navegador 
 driver.quit()
 
