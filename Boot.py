@@ -74,7 +74,7 @@ def nombrepdf():
     es_valido = re.match(patron, codigo_unico)
 
     if es_valido is None:
-        alerta("El nombre unico no cumple el formato, este problema seguramente esta ocurriendo porque no cumple con el formato o el formulario no es compatible con el programa, porfavor, contactar con el desarrollador")
+        alerta("El nombre unico no cumple el formato, este problema seguramente esta ocurriendo porque no cumple con el formato o el formulario no es compatible con el programa, por favor, contactar con el desarrollador")
         time.sleep(10)
         driver.quit()
 
@@ -83,7 +83,7 @@ def nombrepdf():
 
     valida = re.match(patro, fecha)
     if valida is None:
-        alerta("La fecha no cumple el formato, este problema seguramente esta ocurriendo porque no cumple con el formato o el formulario no es compatible con el programa, porfavor, contactar con el desarrollador")
+        alerta("La fecha no cumple el formato, este problema seguramente esta ocurriendo porque no cumple con el formato o el formulario no es compatible con el programa, por favor, contactar con el desarrollador")
         time.sleep(10)
         driver.quit()
 
@@ -159,7 +159,9 @@ def descargar_pdf():
     wait.until(EC.presence_of_element_located((By.XPATH, '/html/body/div[1]/article/header/button[1]')))
     time.sleep(6)
     imprimir= driver.find_element(By.XPATH, '/html/body/div[1]/article/header/button[1]')
-
+    #Se maximiza la pantalla
+    driver.maximize_window()
+    time.sleep(4)
     # Obtiene las coordenadas absolutas del botón en la pantalla
     x_absoluto = imprimir.location['x']
     y_absoluto = imprimir.location['y']
@@ -190,9 +192,8 @@ def calcular_diferencia(numero):
 
 #INICIO DEL CODIGO 
 #------VENTANA 0
-# Ruta al controlador de Microsoft Edge (descárgalo previamente desde https://developer.microsoft.com/en-us/microsoft-edge/tools/webdriver/)
-print(pa.size())
-print(pa.position()) 
+# Ruta al controlador de Crhome (descárgalo previamente desde https://chromedriver.chromium.org/downloads)
+
 
 # Inicializa las opciones del navegador Chrome
 options = Options()
@@ -210,11 +211,6 @@ driver.maximize_window()
 time.sleep(6)
 
 
-#usuario=driver.find_element(By.NAME, "login")
-#usuario.send_keys('pasante_monitoreo')
-#contrasena=driver.find_element(By.NAME,'password')
-#contrasena.send_keys('1/fyV2g(H1h')
-#contrasena.submit()
 
 alerta("Debe ingresar su usuario y contraseña para que el bot pueda continuar")
 #Pausa para que el usuario ingrese su usuario y contraseña
@@ -289,14 +285,21 @@ if validacion == True:
                 time.sleep(5)    
             #seleccionamos el ojito donde queremos descargar el pdf
             ojitos = driver.find_elements(By.CSS_SELECTOR,'button[data-tip="Abrir"]')
-            ojitos[posicion_ojito-1].click() 
-            time.sleep(6)
-            
-            #Se abre ventana 1 para la descarga de archivos
-            for i in range(1,numero_pdf+1):
-                descargar_pdf()
-                if(i!=numero_pdf):
-                    pasar_siguiente()
+
+            #Validamos que esta en el rango disponible 
+            if(len(ojitos)>= posicion_ojito):
+                ojitos[posicion_ojito-1].click() 
+                time.sleep(6)
+                
+                #Se abre ventana 1 para la descarga de archivos
+                for i in range(1,numero_pdf+1):
+                    descargar_pdf()
+                    if(i!=numero_pdf):
+                        pasar_siguiente()
+            else:
+                alerta("ERROR El numero ingresado es mayor al total de resultados.")
+                time.sleep(8)
+                driver.quit()
         else:
             alerta("ERROR Solo se aceptan numeros en el campo solicitado anteriormente")
             time.sleep(8)
