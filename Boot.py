@@ -49,13 +49,7 @@ def nombrepdf():
     # Recorrer los elementos y verificar si contienen el texto deseado
     for i, elemento in enumerate(elementos):
         texto = elemento.text
-        if'¿A qué proyecto se reportan las actividades que se van a realizar?' in texto:
-        # Verificar si existe un elemento siguiente
-            if i + 1 < len(elementos):
-                elementoSiguiente = elementos[i + 1]
-                nombre_proyecto = elementoSiguiente.text
-
-
+    
         if 'Fecha en la que se realiza la atención' in texto:
             if i + 1 < len(elementos):
                 elementoSiguiente = elementos[i + 1]
@@ -89,7 +83,7 @@ def nombrepdf():
 
     fecha_nueva = modificar_fecha(fecha)
     # Guardar el valor del Nombre del Proyecto
-    nom = codigo_unico + fecha_nueva + nombre_proyecto.upper()
+    nom = codigo_unico + fecha_nueva
     return nom
 
 def modificar_fecha(fecha):
@@ -167,8 +161,8 @@ def descargar_pdf():
     y_absoluto = imprimir.location['y']
 
     #Click al boton de la impresora 
-    pa.moveTo(x_absoluto, y_absoluto+123, duration=3)
-    pa.click(x_absoluto,y_absoluto+123)
+    pa.moveTo(x_absoluto+10, y_absoluto+150, duration=3)
+    pa.click(x_absoluto+10,y_absoluto+150)
     time.sleep(4)
     #enter para presioanr el boton de guardar/imprimir  
     pa.press('enter')
@@ -184,8 +178,8 @@ def descargar_pdf():
 def calcular_diferencia(numero):
     veces_resta = 0
 
-    while numero > 500:
-        numero -= 500
+    while numero > 30:
+        numero -= 30
         veces_resta += 1
 
     return numero, veces_resta
@@ -261,7 +255,7 @@ if validacion == True:
     #Se seleeciona para que se muestren 500 filas, para asi buscar mas eficientemente
     seleccionar_cant_filas= driver.find_element(By.CSS_SELECTOR,"#kpiapp > div.mdl-layout.mdl-layout--fixed-header.page-wrapper > div.mdl-layout__content.page-wrapper__content.page-wrapper__content--form-landing > div.form-view.form-view--table > div.ReactTable.-highlight > div.pagination-bottom > div > div.-center > span.select-wrap.-pageSizeOptions > select")
     select= Select(seleccionar_cant_filas)
-    select.select_by_value("500")
+    select.select_by_value("30")
     
     #Se espera a que cargue
     time.sleep(5) 
@@ -277,12 +271,12 @@ if validacion == True:
         if (re.match("^[0-9]+$", numero_pdf)):
             numero_pdf=int(numero_pdf)
             alerta("Porfavor, no tocar ni el mouse ni el teclado hasta terminar con el proceso")
-            time.sleep(6)
+            time.sleep(15)
             sig= driver.find_element(By.XPATH, '//*[@id="kpiapp"]/div[3]/div[2]/div[2]/div[2]/div[2]/div/div[3]/button')
             #le damos tantas veces a siguiente para llegar al archivo que queramos, con esto me refiero a la pagina 
             for i in  range(1,veces_next+1):
                 sig.click()
-                time.sleep(5)    
+                time.sleep(15)    
             #seleccionamos el ojito donde queremos descargar el pdf
             ojitos = driver.find_elements(By.CSS_SELECTOR,'button[data-tip="Abrir"]')
 
