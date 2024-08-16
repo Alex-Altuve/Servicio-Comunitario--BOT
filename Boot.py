@@ -40,7 +40,7 @@ def alerta(mensaje_notificacion):
 def nombrepdf():
     #CODIGO UNICO 
     contenedor_div = WebDriverWait(driver, 10).until(
-    EC.presence_of_element_located((By.CSS_SELECTOR, '#kpiapp > div.mdl-layout.mdl-layout--fixed-header.page-wrapper.page-wrapper--is-modal-visible.page-wrapper--is-modal-submission > div.modal__backdrop > div > div > div > div > div.submission-data-table > div.submission-data-table__row.submission-data-table__row--group.submission-data-table__row--type-group_root > div.submission-data-table__row.submission-data-table__row--group-children > div:nth-child(2)'))
+    EC.presence_of_element_located((By.CSS_SELECTOR, '#kpiapp > div.mdl-layout.mdl-layout--fixed-header.page-wrapper.page-wrapper--is-modal-visible.page-wrapper--is-modal-submission > div.modal__backdrop > div > div > div > div > div.submission-data-table__row.submission-data-table__row--group.submission-data-table__row--type-group_root > div.submission-data-table__row.submission-data-table__row--group-children > div:nth-child(2)'))
     )
 
     # Obtener todos los elementos dentro del contenedor div
@@ -137,7 +137,7 @@ def descargar_pdf():
 
     nom=nombrepdf()
     time.sleep(6)
-    boton_ver_form= driver.find_element(By.CSS_SELECTOR,"#kpiapp > div.mdl-layout.mdl-layout--fixed-header.page-wrapper.page-wrapper--is-modal-visible.page-wrapper--is-modal-submission > div.modal__backdrop > div > div > div > div > div:nth-child(2) > div.submission-actions > a:nth-child(3)")
+    boton_ver_form= driver.find_element(By.CSS_SELECTOR,"#kpiapp > div.mdl-layout.mdl-layout--fixed-header.page-wrapper.page-wrapper--is-modal-visible.page-wrapper--is-modal-submission > div.modal__backdrop > div > div > div > section:nth-child(2) > div.submission-modal-actions > button:nth-child(3)")
     boton_ver_form.click()
     time.sleep(6)
     
