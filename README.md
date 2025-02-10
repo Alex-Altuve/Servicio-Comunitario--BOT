@@ -12,7 +12,6 @@
 
 Bot para la automatización de descargas de PDF para AVESSOC
 
-
 ## Dependencias
 ```
 1. selenium
