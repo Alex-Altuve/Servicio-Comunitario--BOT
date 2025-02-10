@@ -10,7 +10,7 @@
 
 # Servicio Comunitario Bot
 
-Bot para la automatización de descargas de PDF para AVESSOC
+Bot para la automatización de descargas de PDF
 
 ## Dependencias
 ```
@@ -37,3 +37,11 @@ Bot para la automatización de descargas de PDF para AVESSOC
 - ### [@Alex Altuve](https://github.com/Alex-Altuve)  [![linkedin](https://img.shields.io/badge/linkedin-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/alex-altuve-delgado-b1a212288/)
 
 - ### [@Santiago Peña](https://github.com/Handleinchain) 
+
+## Realizado para AVESSOC
+
+<p align="center">
+  <a href="http://nestjs.com/" target="blank"><img src="https://avessoc.org.ve/wp-content/uploads/2017/06/Logo-Avessoc-peque.png" width=200 /></a>
+</p>
+
+**Contacto:** monitoreo@avessoc.org.ve
